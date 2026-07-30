@@ -4,16 +4,17 @@ Microsoft Graph.
 
 Supports two auth modes, selected by GRAPH_AUTH_MODE (default "delegated"):
 
-  "delegated" — uses the caller's own signed-in identity via the Azure CLI
-      (`az login`). No app registration or client secret required, but the
-      Azure CLI must be installed and `az login` run beforehand, and the
-      signed-in user must already have write access to the target SharePoint
-      site. Recommended default for interactive/manual use.
+  "delegated" — uses the caller's own signed-in identity via the Azure CLI's
+      LOCAL cached session (`az account get-access-token`). The Azure CLI
+      keeps a persistent local login on this machine that silently refreshes
+      — `az login` is a ONE-TIME setup step, not something required at the
+      start of every session. Re-run `az login` only if `az account show`
+      fails (e.g. after an explicit logout or token revocation).
 
   "app" — app-only auth via an Azure AD app registration (client credentials
       flow). Requires admin-provisioned GRAPH_CLIENT_ID/GRAPH_CLIENT_SECRET.
-      Use for unattended automation (scheduled tasks, CI) with no user
-      available to run `az login`.
+      Use for unattended automation (scheduled tasks, CI) with no local
+      Azure CLI session available.
 
 Requires the following variables in .env (comments in that file explain how
 to obtain them):
@@ -64,10 +65,11 @@ def _require_env(name: str) -> str:
 
 def _get_delegated_token() -> str:
     """
-    Acquire a Graph access token for the current user via the Azure CLI.
-
-    Requires `az login` to have been run already. Raises SharePointUploadError
-    with guidance if the Azure CLI is missing or no one is logged in.
+    Acquire a Graph access token for the current user via the Azure CLI's
+    LOCAL cached session (no interactive prompt if that session is valid —
+    which it normally is; `az login` is one-time setup, not per-session).
+    Raises SharePointUploadError with guidance if the Azure CLI is missing
+    or has no cached session at all.
     """
     try:
         result = subprocess.run(
@@ -93,7 +95,7 @@ def _get_delegated_token() -> str:
 
     if result.returncode != 0:
         raise SharePointUploadError(
-            "Azure CLI has no active login. Run 'az login' first, or set "
+            "Azure CLI has no valid local session. Run 'az login' once, or set "
             f"GRAPH_AUTH_MODE=app to use client-credentials auth. Details: {result.stderr.strip()}"
         )
     return json.loads(result.stdout)["accessToken"]

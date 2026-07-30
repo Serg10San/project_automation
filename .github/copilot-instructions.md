@@ -5,6 +5,22 @@ project_automation: Power Automate / Graph API project-tracking automation, scaf
 
 Scaffolded 2026-07-29 from the IRE Python + Skills framework template.
 
+## ⏭️ Next Session — Do This First (as of 2026-07-30)
+Enrich `src/tools/weekly_report.py` with patterns adapted from
+[AmyIntel/ire-automate-weekly](https://github.com/AmyIntel/ire-automate-weekly):
+1. **Config-driven source registry** — a `weekly_sources.json`-style file
+   (enable/disable sources, keyword include/exclude lists, multi-repo
+   auto-discovery via `git_scan` + `max_depth`) replacing the hardcoded
+   `THEMES` dict and single `WEEKLY_SOURCE_REPO` env var.
+2. **Manual notes merge** — a `weekly_notes.md`-style file for
+   Blockers/Next-Week content, merged with auto-collected evidence into the
+   standard **Progress / Blockers / Next Week** report format (today's
+   report only emits 3 auto-ranked theme bullets).
+
+Note: the `az login`-removal work (Graph/SharePoint auth) is already done —
+see "Graph/SharePoint Auth" below. Remove this section once the enrichment
+above is complete.
+
 ## Language & Runtime
 - Python 3.11+
 - Virtual environment at `.venv/`
@@ -15,14 +31,18 @@ Scaffolded 2026-07-29 from the IRE Python + Skills framework template.
 - Use `test_runner.py` for input/output script tests; use `pytest` for unit tests
 - Keep secrets in `.env` (never commit)
 
-## Session Startup (mandatory)
-- At the start of every Copilot CLI session in this folder, run `az login`
-  first (delegated Graph/SharePoint auth — see `GRAPH_AUTH_MODE=delegated`
-  in `.env` — expires and must be refreshed each session).
-- `az` is not on PATH in this environment; use the full path:
-  `C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin\az.cmd login`
-- This is required before any task that uploads to SharePoint (e.g.
-  `weekly_report.py`, `sharepoint_upload.py`) will succeed.
+## Graph/SharePoint Auth (one-time setup, not per-session)
+- SharePoint upload (`weekly_report.py`, `sharepoint_upload.py`) uses the
+  Azure CLI's **local cached session** (`az account get-access-token`) — your
+  OS-level credentials on this machine.
+- `az login` is a **ONE-TIME** setup step, not something required at the
+  start of every Copilot CLI session. The CLI keeps a persistent local login
+  that silently refreshes across sessions.
+- `az` is not on PATH in this environment; use the full path if needed:
+  `C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin\az.cmd`
+- Only re-run `az login` if `az account show` fails (explicit logout, revoked
+  token, expired conditional-access session, etc) — do NOT run it
+  preemptively every session.
 
 ## Key Files
 - `requirements.txt` — runtime dependencies
