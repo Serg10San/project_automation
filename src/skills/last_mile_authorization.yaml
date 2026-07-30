@@ -1,0 +1,122 @@
+# Last-Mile Authorization (Authorization at Point of Use) Skill
+# Source: IRE Agentic Platform — Backlog Update 5 (Harris, 2026-07-21)
+# Reference: Zero Trust — authorization validated at the moment of data access
+#            or action execution, not at session initialization.
+#
+# EXPORTABLE SKILL DEFINITION
+# ─────────────────────────────────────────────────────────────────────────────
+# Detects evidence that a project enforces authorization-at-point-of-use:
+# a central Policy Decision Point (PDP) is consulted before every data read,
+# write, action, or external API call; cached decisions are not treated as
+# permanent; and denial events are logged and auditable.
+#
+# To share with others: copy this single file into src/skills/. Auto-discovered.
+# ─────────────────────────────────────────────────────────────────────────────
+
+skill:
+  name: "Last-Mile Authorization"
+  domain: "AI Governance & Safety"
+  description: >
+    Authorization-at-point-of-use (last-mile authorization). Enforces Zero
+    Trust: access is continuously validated at the exact moment of use rather
+    than granted once at session start. Requires a central Policy Decision
+    Point consulted before every read, write, action, and external API call;
+    prohibits treating cached authorization decisions as permanent; and logs
+    all denial events for audit.
+
+  indicators:
+
+    # ── Policy Decision Point / central enforcement ──────────────────────────
+
+    - name: "central policy decision point"
+      description: >
+        A single governance-layer Policy Decision Point (PDP) / Policy
+        Enforcement Point is consulted for authorization decisions rather than
+        ad-hoc inline role checks scattered across call sites.
+      patterns:
+        - "policy_decision_point|policy_enforcement_point"
+        - "\\bpdp\\b|\\bpep\\b"
+        - "authorize\\(|check_authorization|is_authorized"
+        - "policy_engine|authz_engine|authorization_service"
+      globs:
+        - "*.py"
+        - "*.yaml"
+        - "*.yml"
+        - "*.json"
+
+    # ── Point-of-use / per-access re-validation ──────────────────────────────
+
+    - name: "point-of-use authorization checks"
+      description: >
+        Authorization is validated at the moment of data access, write, action
+        execution, or external API call — before the operation runs — not once
+        per session.
+      patterns:
+        - "point.of.use|point.of.access|last.mile"
+        - "authorize.*before|before.*(read|write|call|execute)"
+        - "authz.*at.*(access|use|execution)"
+        - "re.?validate|re.?evaluat|re.?check.*permission"
+        - "continuous.*validation|validate.*every.*access"
+      globs:
+        - "*.py"
+        - "*.md"
+
+    # ── Cached decisions are not permanent ───────────────────────────────────
+
+    - name: "non-permanent authorization cache"
+      description: >
+        Cached authorization decisions are given a short TTL and re-validated on
+        expiry; a prior 'allow' is never treated as permanent authorization.
+      patterns:
+        - "auth.*cache.*ttl|ttl.*auth|permission.*ttl"
+        - "cache.*expir|expir.*(auth|permission|decision)"
+        - "not.*permanent|revalidate.*cache|stale.*permission"
+        - "decision_ttl|authz_ttl|max_age.*decision"
+      globs:
+        - "*.py"
+        - "*.yaml"
+        - "*.yml"
+
+    # ── Deny-by-default ──────────────────────────────────────────────────────
+
+    - name: "deny-by-default authorization"
+      description: >
+        When the PDP cannot positively confirm authorization, access is denied
+        by default rather than allowed.
+      patterns:
+        - "deny.?by.?default|default.*deny|fail.?closed|fail.?secure"
+        - "AuthorizationError|PermissionDenied|AccessDenied"
+        - "raise.*(Authorization|Permission|AccessDenied)"
+      globs:
+        - "*.py"
+
+    # ── Denial audit logging ─────────────────────────────────────────────────
+
+    - name: "authorization denial audit logging"
+      description: >
+        Access-denial events are logged, attributable to the agent identity,
+        and auditable.
+      patterns:
+        - "log.*deny|deny.*log|audit.*deny|log.*denial"
+        - "access_denied.*log|log.*access_denied"
+        - "audit_log\\.deny|audit\\.deny|emit.*denial"
+      globs:
+        - "*.py"
+
+    # ── Teaching / documentation evidence ────────────────────────────────────
+
+    - name: "last-mile authorization documentation"
+      description: >
+        Documentation or ADR describing authorization-at-point-of-use, the
+        Policy Decision Point flow, and the Zero Trust rationale (permissions
+        re-evaluated at execution, cached decisions not permanent).
+      patterns:
+        - "last.mile.*authoriz|authoriz.*point.of.use"
+        - "policy decision point|zero trust.*authoriz"
+        - "cached.*decision.*not.*permanent|re.?evaluat.*at.*execution"
+        - "authorization.*at.*(access|use|execution)"
+      globs:
+        - "*.md"
+        - "*.txt"
+        - "*.rst"
+      is_teaching: true

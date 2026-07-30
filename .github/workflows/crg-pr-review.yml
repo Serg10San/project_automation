@@ -1,0 +1,28 @@
+name: CRG PR Review (optional)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  crg-pr-review:
+    name: Token-efficient risk review
+    if: ${{ vars.CRG_PR_REVIEW_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Run code-review-graph PR review
+        uses: tirth8205/code-review-graph@6a1ee1c7063cc35cfa5ff12b8198c29360f3e4ad  # v2.3.7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          comment: "true"
+          fail-on-risk: none
+          python-version: "3.12"

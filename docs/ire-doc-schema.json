@@ -1,0 +1,153 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ire-doc-schema/1.1",
+  "title": "IRE Knowledge Document Front Matter",
+  "description": "JSON Schema for the ire_doc YAML front matter block. Valid taxonomy values are in ire-taxonomy.yaml.",
+  "type": "object",
+  "required": ["ire_doc"],
+  "properties": {
+    "ire_doc": {
+      "type": "object",
+      "required": ["type", "area", "perspective", "intent", "author", "created", "status"],
+      "additionalProperties": false,
+      "properties": {
+
+        "type": {
+          "type": "string",
+          "description": "What kind of artifact this is.",
+          "enum": [
+            "decision",
+            "runbook",
+            "knowledge",
+            "email",
+            "retrospective",
+            "status",
+            "requirements",
+            "analysis"
+          ]
+        },
+
+        "area": {
+          "type": "string",
+          "description": "Which IRE platform area this document belongs to. Use 'area' not 'domain' — ServiceNow uses Domain for Domain Separation.",
+          "enum": [
+            "observability",
+            "sla",
+            "cmdb",
+            "incident",
+            "data-lake",
+            "iapm",
+            "predictive",
+            "platform",
+            "governance",
+            "cross-cutting"
+          ]
+        },
+
+        "perspective": {
+          "type": "string",
+          "description": "The lens an AI or human reader should apply when reading this document.",
+          "enum": [
+            "sre",
+            "product-owner",
+            "executive",
+            "security",
+            "developer",
+            "any"
+          ]
+        },
+
+        "intent": {
+          "type": "string",
+          "description": "What the author needs from the reader.",
+          "enum": [
+            "decision-request",
+            "action-required",
+            "fyi",
+            "knowledge-capture",
+            "review-request",
+            "escalation"
+          ]
+        },
+
+        "author": {
+          "type": "string",
+          "description": "Intel username of the primary author, e.g. jmonroe. Must match an entry in docs/ire-knowledge-schema.yaml authors list (advisory only).",
+          "minLength": 1
+        },
+
+        "created": {
+          "type": "string",
+          "description": "ISO 8601 date this document was created, e.g. 2026-07-01.",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+
+        "updated": {
+          "type": "string",
+          "description": "ISO 8601 date of last significant content change.",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+
+        "status": {
+          "type": "string",
+          "description": "Lifecycle status of this document.",
+          "enum": ["draft", "review", "approved", "superseded"]
+        },
+
+        "project": {
+          "type": "string",
+          "description": "Optional. Which IRE sub-project this document belongs to.",
+          "enum": [
+            "ire-observability",
+            "ire-sla",
+            "ire-predictiveanalytics",
+            "ire-datalake",
+            "ire-cmdb",
+            "ire-platform",
+            "ire-python-template",
+            "cross-cutting"
+          ]
+        },
+
+        "supersedes": {
+          "type": "string",
+          "description": "Optional. Filename (relative to docs/) of the document this replaces. Set the replaced doc status to 'superseded'."
+        },
+
+        "expires": {
+          "type": "string",
+          "description": "Optional. ISO 8601 date after which this document should be reviewed or retired. Useful for status snapshots and runbooks that go stale.",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+
+        "schema_version": {
+          "type": "string",
+          "description": "Schema version used when this document was created. Do not edit manually.",
+          "enum": ["1.0", "1.1"]
+        },
+
+        "ai_index": {
+          "type": "object",
+          "description": "Instructions and tags for AI indexing, RAG pipelines, and summarization tools.",
+          "additionalProperties": false,
+          "properties": {
+            "summary_prompt": {
+              "type": "string",
+              "description": "One sentence telling AI how to summarize this document. Example: 'Summarize this as a ServiceNow CMDB change justification.'"
+            },
+            "tags": {
+              "type": "array",
+              "description": "Tags for indexing. Prefer values from ire-taxonomy.yaml.",
+              "items": { "type": "string" }
+            },
+            "do_not_summarize": {
+              "type": "boolean",
+              "description": "Set true to exclude this document from AI summarization and indexing."
+            }
+          }
+        }
+
+      }
+    }
+  }
+}

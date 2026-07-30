@@ -1,0 +1,61 @@
+# Plan-Before-Code Gate Skill
+# Source: IRE engineering framework — mandatory planning gate.
+#
+# EXPORTABLE SKILL DEFINITION
+# ─────────────────────────────────────────────────────────────────────────────
+# Detects evidence that the project practices plan-before-code: an approved
+# plan (PRD, ADR, or issue) exists and is traceable from commits, and the
+# planning gate is documented in the AI instructions / skills.
+#
+# To share with others: copy this single file into src/skills/. Auto-discovered.
+# ─────────────────────────────────────────────────────────────────────────────
+
+skill:
+  name: "Plan-Before-Code Gate"
+  domain: "Leadership & Communication"
+  description: >
+    Evidence that production code is never written before an approved plan
+    exists. Looks for planning artefacts (PRDs, ADRs, issue references),
+    commit messages that trace back to an approved plan/issue, and a
+    documented mandatory planning gate in the AI instructions or skills.
+
+  indicators:
+
+    - name: "planning gate documented"
+      description: >
+        A documented, mandatory plan-before-code gate in the AI instructions
+        or an engineering skill.
+      patterns:
+        - "plan.before.code|plan.first|no.*code.*without.*plan"
+        - "approved plan|plan.*approv|approv.*before.*cod"
+        - "planning gate|before.*writing.*(any.)?code"
+      globs:
+        - "*.md"
+        - "*.txt"
+      is_teaching: true
+
+    - name: "planning artefacts (PRD / ADR)"
+      description: >
+        Product requirement documents and architecture decision records that
+        capture an approved plan before implementation.
+      existence_globs:
+        - "docs/adr/*.md"
+        - "docs/adrs/*.md"
+        - "adr.html"
+        - "PRD.md"
+        - "docs/prd/*.md"
+        - "docs/PRD*.md"
+
+    - name: "plan/issue traceability in commits or docs"
+      description: >
+        Implementation is traceable to an approved plan or issue — commit or
+        doc conventions that reference an issue/ADR/PRD.
+      patterns:
+        - "closes #|fixes #|refs #|issue #\\d+"
+        - "ADR-\\d+|ADR \\d+|adr[-_]\\d+"
+        - "per (the )?(approved )?(plan|prd|issue)"
+        - "implements (issue|adr|prd)"
+      globs:
+        - "*.md"
+        - "*.txt"
+        - "CHANGELOG*"

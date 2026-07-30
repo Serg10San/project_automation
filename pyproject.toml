@@ -1,0 +1,43 @@
+[project]
+name = "project-automation"
+version = "0.1.0"
+description = "Power Automate / Graph API project-tracking automation, scaffolded to mirror moonrox/IRE-AutomateProject"
+requires-python = ">=3.11"
+dependencies = [
+    "PyYAML>=6.0.0",
+]
+
+[project.scripts]
+assess-skills = "assess_skills:main"
+version-info  = "version:main"
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.4.0",
+    "black>=24.0.0",
+    "mypy>=1.10.0",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "code-review-graph==2.3.7",
+    "jupyter>=1.0.0",
+    "ipykernel>=6.0.0",
+]
+
+# Black owns formatting — do not add [tool.ruff.format]
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+# Ruff owns linting only
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "N"]
+
+[tool.mypy]
+python_version = "3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

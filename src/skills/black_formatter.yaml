@@ -1,0 +1,87 @@
+# Black Code Formatter Skill
+# Source: https://black.readthedocs.io/en/stable/
+#
+# EXPORTABLE SKILL DEFINITION
+# ─────────────────────────────────────────────────────────────────────────────
+# Detects evidence of Black — the opinionated Python code formatter — being
+# configured and used in a project.  Black enforces a single, consistent style
+# with no per-rule configuration: the same code looks the same everywhere.
+#
+# To share with others: copy this single file.  No other dependencies needed.
+# ─────────────────────────────────────────────────────────────────────────────
+
+skill:
+  name: "Black Code Formatter"
+  domain: "Python & Development"
+  description: >
+    Evidence that Black — the opinionated Python code formatter — is configured
+    and applied in the project.  Black enforces PEP 8 compliance with zero
+    per-rule configuration: line length, string quoting, trailing commas, and
+    whitespace are all handled automatically and consistently.  Pairs with ruff
+    (linting) and mypy (type checking) as the IRE code quality stack.
+
+  indicators:
+
+    # ── Configuration ─────────────────────────────────────────────────────────
+
+    - name: "black config in pyproject.toml"
+      description: >
+        [tool.black] section present in pyproject.toml, establishing project-wide
+        line-length and target Python version for Black.
+      patterns:
+        - '\[tool\.black\]'
+        - 'line.length\s*=\s*\d+'
+        - 'target.version\s*=\s*\[.*py3'
+      globs:
+        - "pyproject.toml"
+        - "*.toml"
+
+    # ── Dependency declaration ─────────────────────────────────────────────────
+
+    - name: "black in requirements or dev deps"
+      description: >
+        Black declared as a dev/test dependency in requirements-dev.txt,
+        pyproject.toml optional-dependencies, or setup.cfg.
+      patterns:
+        - 'black[>=<!\s]'
+        - '"black[>=<!\s]'
+      globs:
+        - "requirements*.txt"
+        - "pyproject.toml"
+        - "setup.cfg"
+        - "setup.py"
+
+    # ── Usage in scripts / CI ──────────────────────────────────────────────────
+
+    - name: "black invoked in CI or pre-commit"
+      description: >
+        Black run as part of a CI workflow, Makefile, or pre-commit hook —
+        ensuring formatting is enforced on every push or commit.
+      patterns:
+        - 'black\s+\.'
+        - 'black\s+src'
+        - 'black\s+--check'
+        - 'run:\s*black'
+        - 'repo:\s*https://github.com/psf/black'
+      globs:
+        - "*.yml"
+        - "*.yaml"
+        - "Makefile"
+        - ".pre-commit-config.yaml"
+
+    # ── Teaching indicator ─────────────────────────────────────────────────────
+
+    - name: "black formatter documentation"
+      description: >
+        README or instruction file explaining Black's opinionated formatting
+        philosophy and how to run it in the project.
+      patterns:
+        - 'black.*format|format.*black'
+        - 'opinionated.*format|format.*opinionated'
+        - 'black --check|run black'
+        - 'code style.*black|black.*code style'
+      globs:
+        - "*.md"
+        - "*.txt"
+        - "*.rst"
+      is_teaching: true

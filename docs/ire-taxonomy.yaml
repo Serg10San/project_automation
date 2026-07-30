@@ -1,0 +1,57 @@
+# IRE Team Taxonomy — Controlled Vocabulary
+#
+# These are the VALID values for ire_doc front matter fields.
+# If a value you need is not listed here, propose adding it rather than
+# inventing an undeclared value — consistency is what makes AI indexing work.
+#
+# To add a value: edit this file, commit, and update ire-knowledge-schema.yaml
+# version to signal that consuming projects should re-sync.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Document types ────────────────────────────────────────────────────────────
+# What kind of artifact is this?
+types:
+  - decision          # ADR or formal decision record (who, what, why, rejected options)
+  - runbook           # step-by-step operational procedure
+  - knowledge         # reference material, how-it-works, background
+  - email             # email thread summary or draft
+  - retrospective     # sprint/incident retro notes
+  - status            # point-in-time project or service status snapshot
+  - requirements      # PRD, user stories, acceptance criteria
+  - analysis          # investigation findings, spike output, research notes
+
+# ── IRE Areas ─────────────────────────────────────────────────────────────────
+# Which area of the IRE platform does this document belong to?
+# Note: "area" is used here instead of "domain" — ServiceNow uses "Domain" for
+# Domain Separation (a specific feature). Use "area" to avoid ambiguity.
+areas:
+  - observability     # IRE-Observability, monitoring, topology
+  - sla               # IRE-SLA, breach tracking, availability
+  - cmdb              # ServiceNow CMDB, CI relationships, IAPM
+  - incident          # Major incident management, MTTR, RCA
+  - data-lake         # IRE data lake, backfill, sync pipelines
+  - iapm              # IAPM compliance, Tier 1/2 application portfolio
+  - predictive        # IRE-PredictiveAnalytics, forecasting, anomaly detection
+  - platform          # Cross-cutting: infrastructure, authentication, deployment
+  - governance        # AI governance, security, compliance, standards
+  - cross-cutting     # Spans multiple areas — use sparingly
+
+# ── Reading perspectives ──────────────────────────────────────────────────────
+# What lens should an AI (or human) apply when reading this document?
+perspectives:
+  - sre               # Operational, reliability-focused — uptime, failure modes, runbooks
+  - product-owner     # Requirements, stakeholder impact, acceptance criteria
+  - executive         # Outcomes and risks only — suppress implementation detail
+  - security          # Threat model, access controls, compliance posture
+  - developer         # Implementation detail, code references, architecture
+  - any               # No specific lens — general-purpose document
+
+# ── Intents ───────────────────────────────────────────────────────────────────
+# What does the author need from the reader?
+intents:
+  - decision-request  # Reader must make or ratify a decision
+  - action-required   # Reader has one or more tasks to complete
+  - fyi               # Informational — no action expected
+  - knowledge-capture # Preserve for future reference; completeness over brevity
+  - review-request    # Reader should provide feedback or approval
+  - escalation        # Time-sensitive; reader must act or escalate further

@@ -1,0 +1,145 @@
+# Dynamic Context Injection Skill
+# The practice of programmatically inserting runtime data into prompts
+# rather than using static, hardcoded prompt strings.
+#
+# EXPORTABLE SKILL DEFINITION
+# ─────────────────────────────────────────────────────────────────────────────
+# Detects evidence that a project builds prompts dynamically — injecting
+# variables, retrieved documents, API responses, or live data at call time.
+# Core pattern behind RAG, agentic tool use, and production AI pipelines.
+#
+# To share with others: copy this single file.  No other dependencies needed.
+# ─────────────────────────────────────────────────────────────────────────────
+
+skill:
+  name: "Dynamic Context Injection"
+  domain: "AI & Agentic Systems"
+  description: >
+    Evidence that the project builds prompts at runtime by injecting variables,
+    retrieved documents, database results, or live API data rather than using
+    static hardcoded strings.  Patterns include f-string prompt templates,
+    system/user message construction with live data, RAG retrieval-then-inject
+    loops, token-aware context trimming, and prompt template libraries.
+    This is the foundational pattern behind RAG, agentic pipelines, and all
+    production AI workflows that need current or user-specific information.
+
+  indicators:
+
+    # ── f-string / format prompt construction ────────────────────────────────
+
+    - name: "f-string prompt templates"
+      description: >
+        Prompts built using Python f-strings with runtime variables — the most
+        common form of dynamic context injection.
+      patterns:
+        - 'prompt\s*=\s*f'
+        - 'system_prompt\s*=\s*f'
+        - 'user_prompt\s*=\s*f'
+        - 'message\s*=\s*f'
+        - 'content\s*=\s*f'
+      globs:
+        - "*.py"
+        - "*.ipynb"
+
+    # ── Message list construction with live data ──────────────────────────────
+
+    - name: "dynamic message construction"
+      description: >
+        AI API message arrays (system/user/assistant) built with runtime data
+        injected into content fields.
+      patterns:
+        - 'role.*system|role.*user'
+        - 'messages\s*=\s*\['
+        - 'SystemMessage|HumanMessage|AIMessage'
+        - 'system_message|user_message'
+        - 'add_message|append.*message'
+      globs:
+        - "*.py"
+        - "*.ipynb"
+
+    # ── RAG — retrieve then inject ────────────────────────────────────────────
+
+    - name: "RAG retrieval and injection"
+      description: >
+        Retrieval-Augmented Generation: documents or records are fetched from a
+        store and injected into the prompt context before the model call.
+      patterns:
+        - 'retrieve|retriever|retrieval'
+        - 'vector_store|vectorstore|embeddings'
+        - 'similarity_search|semantic_search|top_k'
+        - 'retrieved.*context|context.*retrieved'
+        - 'inject.*context|context.*inject'
+        - 'augment.*prompt|prompt.*augment'
+      globs:
+        - "*.py"
+        - "*.ipynb"
+
+    # ── Token-aware context trimming ──────────────────────────────────────────
+
+    - name: "token-aware context management"
+      description: >
+        Context is measured and trimmed to fit within model limits before
+        injection — a production best practice for long-document workflows.
+      patterns:
+        - 'count_tokens|token_count|num_tokens'
+        - 'tiktoken|cl100k_base'
+        - 'context_window|max_tokens|budget_tokens'
+        - 'truncate.*context|context.*truncat'
+        - 'trim.*prompt|prompt.*trim'
+        - 'context_window_report'
+      globs:
+        - "*.py"
+        - "*.ipynb"
+
+    # ── Prompt template libraries ─────────────────────────────────────────────
+
+    - name: "prompt template libraries"
+      description: >
+        Use of structured prompt template tools (LangChain PromptTemplate,
+        Jinja2, string.Template) for reusable, parameterised prompt patterns.
+      patterns:
+        - 'PromptTemplate|ChatPromptTemplate'
+        - 'from_template|from_messages'
+        - 'jinja2|Template\('
+        - 'template\.render|template\.format'
+        - 'partial_variables|input_variables'
+      globs:
+        - "*.py"
+        - "*.ipynb"
+
+    # ── Runtime data sources injected into prompts ────────────────────────────
+
+    - name: "live data injection from APIs or databases"
+      description: >
+        Data fetched from APIs, databases, or files at call time and referenced
+        in the prompt — not hardcoded at write time.
+      patterns:
+        - 'fetch.*inject|inject.*fetch'
+        - 'query.*prompt|prompt.*query'
+        - 'json\.dumps.*prompt|prompt.*json'
+        - 'df\.to_string|df\.to_json'
+        - 'api_response.*prompt|prompt.*api'
+      globs:
+        - "*.py"
+        - "*.ipynb"
+
+    # ── Teaching indicator ────────────────────────────────────────────────────
+
+    - name: "dynamic context injection documentation"
+      description: >
+        README, notebook, or instruction file explaining dynamic context
+        injection — what it is, why static prompts fall short, and how
+        to implement token-aware injection safely.
+      patterns:
+        - 'dynamic context|context injection'
+        - 'inject.*prompt|prompt.*inject'
+        - 'static.*prompt|hardcoded.*prompt'
+        - 'retrieval.augmented|RAG'
+        - 'context window.*cost|cost.*context window'
+        - 'token.aware|trim.*context'
+      globs:
+        - "*.md"
+        - "*.txt"
+        - "*.rst"
+        - "*.ipynb"
+      is_teaching: true

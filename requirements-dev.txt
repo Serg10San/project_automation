@@ -1,0 +1,7 @@
+ruff>=0.4.0        # lint only — do not use ruff format
+black>=24.0.0      # format only — run before ruff check
+mypy>=1.10.0
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
+jupyter>=1.0.0
+ipykernel>=6.0.0

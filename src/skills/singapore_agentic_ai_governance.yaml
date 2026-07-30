@@ -1,0 +1,254 @@
+# Singapore Agentic AI Governance Framework Skill
+# Source: IMDA / Infocomm Media Development Authority, Singapore
+# Reference: https://www.imda.gov.sg/resources/press-releases-factsheets-and-speeches/
+#            factsheets/2024/agentic-ai-governance
+#
+# EXPORTABLE SKILL DEFINITION
+# ─────────────────────────────────────────────────────────────────────────────
+# This file defines detectable code and documentation evidence for
+# implementing Singapore's Agentic AI Governance Framework.  Drop this YAML
+# into the src/skills/ directory of any project that uses the skills_engine
+# scanner and it will automatically be picked up.
+#
+# To share with others: copy this single file.  No other dependencies needed.
+# ─────────────────────────────────────────────────────────────────────────────
+
+skill:
+  name: "Singapore Agentic AI Governance"
+  domain: "AI Governance & Safety"
+  description: >
+    Implementation evidence for Singapore's Agentic AI Governance Framework
+    (IMDA).  Covers the four governance dimensions: risk bounding, human
+    accountability, technical controls, and end-user responsibility.  Also
+    covers the five risk categories (erroneous, unauthorised, biased, data
+    breach, disruption) and multi-agent safety patterns.
+
+  indicators:
+
+    # ── DIMENSION 1: Assess and bound risks upfront ──────────────────────────
+
+    - name: "risk assessment & action-scope definition"
+      description: >
+        Agent risk scored by action-space, autonomy level, reversibility,
+        data sensitivity, and system impact before deployment.
+      patterns:
+        - "risk_score|risk_assessment|residual_risk"
+        - "action_scope|autonomy_level|reversibility"
+        - "data_sensitivity|system_impact|risk_tier"
+        - "approved_use_case|approved_actions|action_allowlist"
+      globs:
+        - "*.py"
+        - "*.yaml"
+        - "*.yml"
+        - "*.json"
+        - "*.md"
+
+    - name: "agent risk config file"
+      description: >
+        Dedicated configuration file that bounds the agent's approved use
+        case, data scope, tool access, and acceptable risk level.
+      existence_globs:
+        - "agent_risk.yaml"
+        - "agent_risk.yml"
+        - "agent_manifest.yaml"
+        - "agent_manifest.yml"
+        - "agent_config.yaml"
+        - "agent_config.yml"
+
+    # ── DIMENSION 2: Agent Identity Management ───────────────────────────────
+
+    - name: "agent identity management"
+      description: >
+        Every agent has a unique identity tied to a supervising human or
+        department.  No shared 'AI admin' accounts.  Agent actions are
+        attributable.  Prevents agent sprawl.
+      patterns:
+        - "agent_id|agent_identity|agent_name"
+        - "agent_owner|supervised_by|owning_team"
+        - "agent_registry|register_agent|deregister_agent"
+        - "agent_manifest|agent_inventory"
+        - "attributable|non.transferable|non_transferable"
+      globs:
+        - "*.py"
+        - "*.yaml"
+        - "*.yml"
+        - "*.json"
+
+    - name: "agent identity documentation"
+      description: >
+        Documented policy or README describing agent identity, ownership,
+        and registration requirements.
+      patterns:
+        - "agent identity|agent sprawl|agent inventory"
+        - "unique.*agent|agent.*unique"
+        - "supervising human|agent owner|owning team"
+      globs:
+        - "*.md"
+        - "*.txt"
+      is_teaching: true
+
+    # ── DIMENSION 2: Bounded & Least-Privilege Authorization ─────────────────
+
+    - name: "bounded & least-privilege authorization"
+      description: >
+        Agent permissions are scoped, least-privilege, session- or
+        time-bound, and limited by what the authorising human is allowed
+        to do.  Agent cannot exceed its supervisor's authority.
+      patterns:
+        - "least.privilege|least_privilege"
+        - "scoped_permission|permission_scope|bounded_auth"
+        - "time.bound|session.bound|expiry|expires_at"
+        - "max_permission|permission_ceiling|inherits_from"
+        - "revoke.*permission|permission.*revoke"
+        # Privilege isolation — agent must not inherit user/developer/admin rights
+        - "privilege.isolation|no.*inherit.*privilege|not.*inherit.*privilege"
+        - "not.*inherit.*(user|developer|admin)|independent.*(security.)?principal"
+        - "security_principal|separate.*principal|no.*privilege.*inherit"
+      globs:
+        - "*.py"
+        - "*.yaml"
+        - "*.yml"
+        - "*.json"
+
+    # ── DIMENSION 3: Technical Controls — Audit & Logging ────────────────────
+
+    - name: "agent action audit logging"
+      description: >
+        Every agent action is logged and attributable.  Logs capture the
+        agent ID, action taken, timestamp, authorising user, and outcome.
+      patterns:
+        - "audit_log|action_log|agent_log"
+        - "log.*agent.*action|agent.*action.*log"
+        - "audit_trail|event_trail|action_trail"
+        - "log_agent_action|record_action|emit_audit"
+        - "agent_id.*log|log.*agent_id"
+      globs:
+        - "*.py"
+
+    - name: "monitoring & alerting"
+      description: >
+        Agent behaviour is monitored in production; anomalies trigger
+        alerts.  Covers rate-limiting, anomaly detection, and dashboards.
+      patterns:
+        - "monitor.*agent|agent.*monitor"
+        - "alert.*agent|agent.*alert"
+        - "anomaly.*detect|detect.*anomaly"
+        - "rate.limit|circuit.breaker|circuit_breaker"
+        - "agent_metrics|agent_health"
+      globs:
+        - "*.py"
+        - "*.yaml"
+        - "*.yml"
+
+    # ── DIMENSION 3: Technical Controls — Sandboxing & Tool Trust ────────────
+
+    - name: "sandboxing & trusted tool controls"
+      description: >
+        Agent operates in a sandbox; tool/server access is governed by an
+        explicit allowlist.  Prevents prompt injection and scope creep.
+      patterns:
+        - "sandbox|sandboxed|sandbox_env"
+        - "trusted_tool|tool_allowlist|tool_whitelist|approved_tools"
+        - "trusted_server|server_allowlist|server_whitelist"
+        - "prompt_injection|injection.*guard|guard.*injection"
+        - "tool_boundary|tool_scope"
+      globs:
+        - "*.py"
+        - "*.yaml"
+        - "*.yml"
+        - "*.json"
+
+    # ── DIMENSION 2 + 3: Human Accountability & Approval Gates ───────────────
+
+    - name: "human oversight & approval gates"
+      description: >
+        Named human owners, approval gates before irreversible actions,
+        escalation paths, and human review for high-impact decisions.
+      patterns:
+        - "human_approval|require_approval|approval_gate"
+        - "human.in.the.loop|human_oversight|human_review"
+        - "escalation_path|escalate_to_human|escalation_policy"
+        - "high.impact.*review|review.*high.impact"
+        - "irreversible.*confirm|confirm.*irreversible"
+        - "hitl|HITL"
+      globs:
+        - "*.py"
+        - "*.yaml"
+        - "*.yml"
+        - "*.md"
+
+    # ── DIMENSION 3: Multi-Agent Safety ──────────────────────────────────────
+
+    - name: "multi-agent coordination controls"
+      description: >
+        Safe multi-agent patterns: kill switches, circuit breakers,
+        structured handoffs, and prevention of cascading failures.
+        Covers sequential, supervisor, and swarm topologies.
+      patterns:
+        - "kill_switch|killswitch|emergency_stop"
+        - "circuit.breaker|circuit_breaker"
+        - "agent.handoff|handoff.*schema|structured.*handoff"
+        - "supervisor.*agent|agent.*supervisor|orchestrat.*agent"
+        - "cascade.*fail|fail.*cascade|blast.radius"
+        - "swarm.*agent|agent.*swarm|sequential.*agent"
+        - "agent.to.agent|inter.agent|agent_channel"
+      globs:
+        - "*.py"
+        - "*.yaml"
+        - "*.yml"
+
+    # ── DIMENSION 4: End-User Responsibility & Deskilling Prevention ─────────
+
+    - name: "deskilling prevention & user training"
+      description: >
+        Documentation and code that keeps humans skilled enough to
+        supervise agents.  Includes failure-mode training, manual task
+        rotation, competency checks, and rubber-stamp prevention.
+      patterns:
+        - "deskilling|de.skilling|skill.retention"
+        - "tradecraft|domain.expert|competency.check"
+        - "rubber.stamp|blind.*trust|over.reliance"
+        - "failure.mode|known.*failure|common.*failure"
+        - "manual.*rotation|rotate.*manual|periodic.*manual"
+        - "human.*judgment|judgment.*required|apply.*judgment"
+      globs:
+        - "*.md"
+        - "*.txt"
+      is_teaching: true
+
+    - name: "agent transparency documentation"
+      description: >
+        Users are told what the agent can do, what it cannot do, and
+        where human judgment is still required.
+      patterns:
+        - "agent.*capabilit|capabilit.*agent"
+        - "agent.*limitation|limitation.*agent"
+        - "when.*human|human.*required|requires.*human"
+        - "not.*automat|avoid.*automat.*high.risk"
+        - "transparency.*agent|agent.*transparency"
+      globs:
+        - "*.md"
+        - "*.txt"
+        - "*.rst"
+      is_teaching: true
+
+    # ── FIVE RISK CATEGORIES ─────────────────────────────────────────────────
+
+    - name: "five-risk-category testing"
+      description: >
+        Tests or documentation covering all five IMDA risk categories:
+        erroneous actions, unauthorised actions, biased/unfair actions,
+        data breaches, and system disruption.
+      patterns:
+        - "erroneous.*action|action.*erroneous"
+        - "unauthori[sz]ed.*action|action.*unauthori[sz]ed"
+        - "biased.*action|unfair.*action|discriminat"
+        - "data.breach|breach.*test|exfiltrat"
+        - "system.*disrupt|disrupt.*system|api.*overload"
+        - "red.team|red_team|adversarial.*test"
+      globs:
+        - "*.py"
+        - "*.md"
+        - "test_*.py"
+        - "*_test.py"
+      is_teaching: true

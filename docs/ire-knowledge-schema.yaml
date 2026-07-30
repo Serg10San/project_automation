@@ -1,0 +1,41 @@
+# IRE Knowledge Identity Layer — Feature Toggle
+#
+# ENABLE:  Set enabled: true  — AI tools will apply the knowledge schema
+#          to all documentation in this project.
+#
+# DISABLE: Set enabled: false, or delete this file entirely.
+#          The scanner will report "Not Detected" — this is not a gap.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+knowledge_identity:
+  enabled: true
+  version: "1.1"
+  project: "project_automation"
+  team: IRE
+
+  # ── Enforcement level ─────────────────────────────────────────────────────
+  # advisory   — AI tools apply the schema when writing; no CI enforcement
+  # enforced   — pre-commit hook fails if new .md docs lack ire_doc front matter
+  enforcement: advisory
+
+  # ── Scope ─────────────────────────────────────────────────────────────────
+  # Directories where front matter is expected on new documentation files.
+  # Files outside these paths are not checked even in enforced mode.
+  doc_paths:
+    - docs/knowledge/
+    - docs/decisions/
+
+  # ── Author profiles ───────────────────────────────────────────────────────
+  # List the team members who have created author profiles.
+  # AI tools check this list before attempting to load a profile.
+  # Add an entry when a team member creates docs/authors/{username}.md
+  authors: []
+  #  - username: jmonroe
+  #    display_name: John Monroe
+  #    role: Product Owner / AI-Enabled Engineer
+
+  # ── Schema reference ─────────────────────────────────────────────────────
+  taxonomy_file: docs/ire-taxonomy.yaml
+  author_template: docs/authors/_template.md
+  doc_template: docs/knowledge/_doc-template.md

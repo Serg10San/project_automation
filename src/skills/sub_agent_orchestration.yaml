@@ -1,0 +1,162 @@
+# Sub-agent Orchestration Skill
+# Patterns for launching, managing, and safely terminating sub-agents
+# in multi-agent Python systems.
+#
+# EXPORTABLE SKILL DEFINITION
+# ─────────────────────────────────────────────────────────────────────────────
+# Detects evidence that a project scaffolds, launches, monitors, and
+# terminates sub-agents safely — including identity registration, task
+# delegation, result handling, kill switches, and circuit breakers.
+# Pairs with Singapore Agentic AI Governance for the full safety picture.
+# ─────────────────────────────────────────────────────────────────────────────
+
+skill:
+  name: "Sub-agent Orchestration"
+  domain: "AI & Agentic Systems"
+  description: >
+    Evidence that the project can spawn, manage, and safely terminate
+    sub-agents.  Covers agent identity registration, task delegation schemas,
+    result collection, kill switches, circuit breakers, and structured
+    handoffs between agents.  This is the operational complement to the
+    Singapore Agentic AI Governance skill — governance defines the rules,
+    orchestration enforces them at runtime.
+
+  indicators:
+
+    # ── Agent registry & identity ─────────────────────────────────────────────
+
+    - name: "agent registry"
+      description: >
+        A registry that tracks active agents by ID — who launched them,
+        what task they own, and their current status.  Prerequisite for
+        audit trails and kill-switch targeting.
+      patterns:
+        - 'AgentRegistry|agent_registry'
+        - 'register_agent|deregister_agent|unregister_agent'
+        - 'agent_id|agent_name|agent_owner'
+        - 'active_agents|running_agents'
+      globs:
+        - "*.py"
+
+    # ── Task delegation & launch ──────────────────────────────────────────────
+
+    - name: "agent launch and task delegation"
+      description: >
+        Structured spawning of sub-agents with a typed task payload —
+        including the task description, input data, timeout, and owning agent.
+      patterns:
+        - 'spawn_agent|launch_agent|start_agent|create_agent'
+        - 'delegate.*task|task.*delegate'
+        - 'AgentTask|TaskPayload|agent_task'
+        - 'asyncio\.create_task|ThreadPoolExecutor|ProcessPoolExecutor'
+        - 'submit.*agent|agent.*submit'
+      globs:
+        - "*.py"
+
+    # ── Result collection ─────────────────────────────────────────────────────
+
+    - name: "agent result collection"
+      description: >
+        Mechanisms to await, collect, and validate results from sub-agents —
+        including timeout handling and partial-failure strategies.
+      patterns:
+        - 'AgentResult|agent_result|collect_results'
+        - 'asyncio\.gather|asyncio\.wait|as_completed'
+        - 'future\.result|task\.result'
+        - 'agent_output|agent_response'
+        - 'timeout.*agent|agent.*timeout'
+      globs:
+        - "*.py"
+
+    # ── Kill switch & circuit breaker ─────────────────────────────────────────
+
+    - name: "kill switch and circuit breaker"
+      description: >
+        Emergency stop mechanisms — a kill switch that terminates a named
+        agent immediately, and a circuit breaker that halts the entire
+        pipeline if error rates exceed a threshold.
+      patterns:
+        - 'kill_switch|killswitch|emergency_stop'
+        - 'circuit_breaker|CircuitBreaker'
+        - 'cancel.*agent|agent.*cancel'
+        - 'stop_agent|terminate_agent|shutdown_agent'
+        - 'breaker.*open|open.*breaker'
+      globs:
+        - "*.py"
+
+    # ── Structured handoff ────────────────────────────────────────────────────
+
+    - name: "structured agent handoff"
+      description: >
+        Typed handoff schema passed between agents — prevents silent data
+        loss when one agent passes work to another.
+      patterns:
+        - 'AgentHandoff|handoff_schema|HandoffPayload'
+        - 'handoff.*agent|agent.*handoff'
+        - 'pass.*to.*agent|forward.*agent'
+        - 'next_agent|downstream_agent'
+      globs:
+        - "*.py"
+
+    # ── Scaffold existence ────────────────────────────────────────────────────
+
+    - name: "agents scaffold module"
+      description: >
+        A dedicated agents/ package in the project — the structural signal
+        that sub-agent orchestration is a first-class concern.
+      existence_globs:
+        - "src/agents/__init__.py"
+        - "agents/__init__.py"
+        - "src/agents/registry.py"
+        - "src/agents/orchestrator.py"
+
+    # ── Teaching indicator ────────────────────────────────────────────────────
+
+    - name: "sub-agent orchestration documentation"
+      description: >
+        README or instruction file explaining how to spawn sub-agents, the
+        kill-switch contract, and the handoff schema — so any new contributor
+        understands the safety boundaries before writing agent code.
+      patterns:
+        - 'sub.agent|subagent'
+        - 'kill.switch|kill switch'
+        - 'agent.*handoff|handoff.*schema'
+        - 'spawn.*agent|launch.*agent'
+        - 'circuit.breaker|agent.*timeout'
+      globs:
+        - "*.md"
+        - "*.txt"
+        - "*.rst"
+      is_teaching: true
+
+    # ── Fable 5 / async dispatch ──────────────────────────────────────────────
+
+    - name: "async subagent dispatch"
+      description: >
+        Evidence that agents are dispatched asynchronously rather than blocking
+        until each returns — the pattern required for Fable 5 parallel subagents
+        and long-lived background agents.
+      patterns:
+        - 'asyncio\.create_task|asyncio\.gather'
+        - 'background.*agent|async.*dispatch'
+        - 'await.*agent|agent.*await'
+        - 'long.lived.*agent|persistent.*agent'
+        - 'mode.*background|detach.*agent'
+      globs:
+        - "*.py"
+
+    - name: "agent memory store"
+      description: >
+        Evidence that the project stores per-run lessons for agents to reference
+        across sessions — the memory pattern introduced in Fable 5 scaffolding
+        guidance for sustained long-horizon autonomy.
+      existence_globs:
+        - "agent_memory/*.md"
+        - "agent_memory/README.md"
+      patterns:
+        - 'agent_memory|agent\.memory'
+        - 'lesson.*file|write.*lesson'
+        - 'one.*lesson.*per.*file'
+      globs:
+        - "*.py"
+        - "*.md"

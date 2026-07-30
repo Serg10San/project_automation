@@ -1,0 +1,141 @@
+# Context Window Management Skill
+# The practice of tracking token consumption across a conversation and compressing
+# history before the model's context limit is reached.
+#
+# EXPORTABLE SKILL DEFINITION
+# ─────────────────────────────────────────────────────────────────────────────
+# Detects evidence that a project measures token usage with tiktoken, applies a
+# compression threshold, and summarises history to keep long-running sessions
+# alive without hitting the model's context ceiling.
+#
+# To share with others: copy this single file.  No other dependencies needed.
+# ─────────────────────────────────────────────────────────────────────────────
+
+skill:
+  name: "Context Window Management"
+  domain: "AI & Agentic Systems"
+  description: >
+    Evidence that the project actively manages the LLM context window — counting
+    tokens precisely with tiktoken, triggering summarisation before the model
+    limit is reached, preserving the system prompt across compressions, and
+    optionally running a background monitor thread. Distinguishes production-grade
+    AI pipelines (token-aware) from scripts that silently truncate or crash when
+    history grows too long.
+
+  indicators:
+
+    # ── tiktoken usage ────────────────────────────────────────────────────────
+
+    - name: "tiktoken token counting"
+      description: >
+        Direct use of tiktoken to count tokens before making an API call —
+        the only reliable way to measure context consumption precisely.
+      patterns:
+        - 'import tiktoken'
+        - 'tiktoken\.encoding_for_model'
+        - 'tiktoken\.get_encoding'
+        - 'enc\.encode\('
+        - 'cl100k_base'
+      globs:
+        - "*.py"
+        - "*.ipynb"
+
+    # ── Compression threshold logic ───────────────────────────────────────────
+
+    - name: "compression threshold"
+      description: >
+        A fractional threshold (e.g. 0.75) applied to the model's token limit
+        to trigger history compression before the window is exhausted.
+      patterns:
+        - 'compression_threshold'
+        - 'should_compress'
+        - 'COMPRESSION_THRESHOLD'
+        - 'context_limit\s*\*\s*0\.'
+        - 'threshold.*token|token.*threshold'
+        - 'pct_used|pct_full'
+      globs:
+        - "*.py"
+        - "*.ipynb"
+
+    # ── Model limit registry ──────────────────────────────────────────────────
+
+    - name: "model token limit registry"
+      description: >
+        A mapping of model names to their maximum context lengths, used to
+        compute the compression threshold dynamically rather than hardcoding it.
+      patterns:
+        - 'MODEL_LIMITS'
+        - 'context_limit\s*='
+        - 'max_tokens.*128.000|128_000.*token'
+        - 'max_tokens.*200.000|200_000.*token'
+        - 'MODEL_LIMITS\.get\('
+      globs:
+        - "*.py"
+        - "*.ipynb"
+
+    # ── History compression / summarisation ───────────────────────────────────
+
+    - name: "history compression"
+      description: >
+        Logic that replaces old messages with a model-generated summary,
+        preserving the system prompt and recent context while reducing token count.
+      patterns:
+        - 'def compress\('
+        - 'auto_compress'
+        - 'compress_history'
+        - 'SUMMARY\]|conversation summary|summarise.*history|summarize.*history'
+        - 'system.*always keep|preserve.*system'
+      globs:
+        - "*.py"
+        - "*.ipynb"
+
+    # ── Background monitor ────────────────────────────────────────────────────
+
+    - name: "background context monitor"
+      description: >
+        A daemon thread or async task that periodically logs the token report
+        so operators can observe context growth in long-running sessions.
+      patterns:
+        - 'monitor.*thread|daemon.*thread'
+        - 'threading\.Thread.*ctx|ctx.*threading\.Thread'
+        - 'monitor_loop|_monitor_loop'
+        - 'monitor_interval'
+        - 'ContextWindowManager.*monitor'
+      globs:
+        - "*.py"
+
+    # ── ContextWindowManager class ────────────────────────────────────────────
+
+    - name: "ContextWindowManager"
+      description: >
+        Use of the IRE ContextWindowManager class from context_window.py —
+        the standard wrapper that combines counting, threshold checks,
+        compression, and optional background monitoring.
+      patterns:
+        - 'ContextWindowManager'
+        - 'from context_window import'
+        - 'mgr\.should_compress|mgr\.compress|mgr\.auto_compress'
+        - 'mgr\.report\('
+      globs:
+        - "*.py"
+        - "*.ipynb"
+
+    # ── Teaching indicator ────────────────────────────────────────────────────
+
+    - name: "context window management documentation"
+      description: >
+        README, notebook, or skill file explaining why token limits matter,
+        how tiktoken is used, when to compress, and how to preserve the system
+        prompt — elevates awareness to Teaching level.
+      patterns:
+        - 'context window|context_window'
+        - 'tiktoken|token count'
+        - 'compression threshold|should_compress'
+        - 'system prompt.*preserve|preserve.*system prompt'
+        - 'MODEL_LIMITS|token limit'
+      globs:
+        - "*.md"
+        - "*.txt"
+        - "*.rst"
+        - "*.ipynb"
+      is_teaching: true

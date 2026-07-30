@@ -1,0 +1,62 @@
+# Secrets & environment config
+.env
+.env.*
+*.env.local
+
+# Python virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Build & dist
+*.egg-info/
+dist/
+build/
+
+# Test & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# VS Code workspace state
+.vscode/*.log
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Project tracker database (runtime data — not committed)
+.tracker/
+
+# Execution history log written by version.py log_run()
+history.jsonl
+
+# code-review-graph (CRG) opt-in artifacts
+.code-review-graph/
+.code-review-graph.db*
+
+# CRG-generated project MCP configs, instructions, hooks, and skills
+.mcp.json
+.vscode/mcp.json
+.cursor/mcp.json
+.claude/
+.gemini/
+.codebuddy/
+.qoder/
+.kiro/settings/mcp.json
+.kiro/steering/code-review-graph.md
+opencode.json
+opencode.jsonc
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+QODER.md
+.cursorrules
+.windsurfrules
+.github/code-review-graph.instruction.md

@@ -1,0 +1,98 @@
+# Knowledge Identity Layer Skill
+# Detects evidence that a project has adopted the IRE Knowledge Identity Layer —
+# structured AI-readable front matter in documentation, author profiles, and the
+# team taxonomy vocabulary file.
+#
+# ENABLE/DISABLE: This skill is ADVISORY. A "Not Detected" result is not a gap
+# in the zero-gap record — it means the team has not yet opted in. The feature
+# is enabled when docs/ire-knowledge-schema.yaml exists with enabled: true.
+# ─────────────────────────────────────────────────────────────────────────────
+
+skill:
+  name: "Knowledge Identity Layer"
+  domain: "AI & Agentic Systems"
+  description: >
+    Evidence that the project uses structured AI-readable metadata in
+    documentation — enabling AI tools to correctly read, categorize, draft,
+    and index knowledge artifacts.  Covers the toggle schema, team taxonomy,
+    author profiles, and ire_doc front matter in documents.
+    This skill is ADVISORY — not detecting it does not break the zero-gap
+    record.  It becomes active when the team opts in by enabling
+    docs/ire-knowledge-schema.yaml.
+
+  indicators:
+
+    # ── Toggle — is the layer enabled? ───────────────────────────────────────
+
+    - name: "knowledge schema toggle"
+      description: >
+        The ire-knowledge-schema.yaml file is present and has enabled: true.
+        This is the feature gate — its absence means the team has not opted in.
+      existence_globs:
+        - "docs/ire-knowledge-schema.yaml"
+
+    # ── Team taxonomy ─────────────────────────────────────────────────────────
+
+    - name: "team taxonomy vocabulary"
+      description: >
+        A controlled vocabulary file defining valid values for document type,
+        area, perspective, and intent fields — ensuring consistent tagging
+        across all team members.
+      existence_globs:
+        - "docs/ire-taxonomy.yaml"
+
+    # ── Author profiles ───────────────────────────────────────────────────────
+
+    - name: "author identity profiles"
+      description: >
+        At least one author profile exists in docs/authors/ — a structured
+        writing profile that AI tools use to draft documents in the author's
+        voice and apply their attribution tag.
+      existence_globs:
+        - "docs/authors/*.md"
+
+    # ── Front matter adoption ─────────────────────────────────────────────────
+
+    - name: "ire_doc front matter in documents"
+      description: >
+        Documentation files contain the ire_doc YAML front matter block —
+        the signal that the team is actively applying the schema, not just
+        storing the template.
+      patterns:
+        - 'ire_doc:'
+        - 'ire_doc:\s*\n\s+type:'
+      globs:
+        - "docs/**/*.md"
+        - "*.md"
+
+    # ── AI index block ────────────────────────────────────────────────────────
+
+    - name: "ai_index metadata for RAG pipelines"
+      description: >
+        Documents include the ai_index block with summary_prompt and tags —
+        enabling correct chunking and retrieval in RAG/vector-store pipelines.
+      patterns:
+        - 'ai_index:'
+        - 'summary_prompt:'
+      globs:
+        - "docs/**/*.md"
+        - "*.md"
+
+    # ── Teaching indicator ────────────────────────────────────────────────────
+
+    - name: "knowledge identity documentation"
+      description: >
+        A README, schema, or taxonomy file that explains the Knowledge Identity
+        Layer to new team members — covering the front matter schema, how to
+        create an author profile, and how to use the taxonomy vocabulary.
+      patterns:
+        - 'ire_doc|ire-knowledge-schema|ire-taxonomy'
+        - 'author.*profile|writing.*style|attribution.tag'
+        - 'knowledge.*identity|document.*schema'
+        - 'perspective.*sre|intent.*decision'
+      globs:
+        - "*.md"
+        - "*.yaml"
+        - "docs/**/*.md"
+        - "docs/**/*.yaml"
+      is_teaching: true

@@ -1,0 +1,113 @@
+# Pre-commit Hooks Skill
+# Source: https://pre-commit.com/
+#
+# EXPORTABLE SKILL DEFINITION
+# ─────────────────────────────────────────────────────────────────────────────
+# Detects evidence that pre-commit hooks are configured and enforced in a
+# project — automatically running Black, Ruff, mypy, and other quality gates
+# before every git commit.  Prevents bad code from ever reaching the repo.
+#
+# To share with others: copy this single file.  No other dependencies needed.
+# ─────────────────────────────────────────────────────────────────────────────
+
+skill:
+  name: "Pre-commit Hooks"
+  domain: "Python & Development"
+  description: >
+    Evidence that pre-commit hooks are configured to automatically enforce code
+    quality (Black formatting, Ruff linting, mypy type-checking, secrets
+    detection) before every git commit.  Pre-commit hooks are the last line of
+    defence before code enters version control — they prevent style drift,
+    type errors, and accidental secret commits at the source rather than in CI.
+    Pairs with Black (format), Ruff (lint), and mypy (type-check) as the
+    complete IRE code quality stack.
+
+  indicators:
+
+    # ── Config file existence ─────────────────────────────────────────────────
+
+    - name: "pre-commit config file"
+      description: >
+        .pre-commit-config.yaml present at the repo root — the single file
+        that defines all hooks and their versions.
+      existence_globs:
+        - ".pre-commit-config.yaml"
+        - ".pre-commit-hooks.yaml"
+
+    # ── Hook declarations ─────────────────────────────────────────────────────
+
+    - name: "black hook configured"
+      description: >
+        Black formatting hook declared in pre-commit config — ensures every
+        commit is formatted before it enters the repo.
+      patterns:
+        - 'repo.*psf/black|psf/black.*repo'
+        - 'id:\s*black'
+      globs:
+        - ".pre-commit-config.yaml"
+
+    - name: "ruff hook configured"
+      description: >
+        Ruff linting hook declared in pre-commit config.
+      patterns:
+        - 'repo.*astral-sh/ruff|ruff-pre-commit'
+        - 'id:\s*ruff'
+      globs:
+        - ".pre-commit-config.yaml"
+
+    - name: "secrets detection hook"
+      description: >
+        detect-secrets, gitleaks, or truffleHog hook configured — prevents
+        accidental commit of API keys, tokens, and credentials.
+      patterns:
+        - 'detect-secrets|gitleaks|truffleHog|trufflehog'
+        - 'id:\s*detect-secrets'
+      globs:
+        - ".pre-commit-config.yaml"
+
+    # ── pre-commit in dev dependencies ────────────────────────────────────────
+
+    - name: "pre-commit in dev requirements"
+      description: >
+        pre-commit declared as a dev dependency so all contributors get the
+        same hook versions.
+      patterns:
+        - 'pre.commit[>=<!]'
+        - '"pre-commit'
+      globs:
+        - "requirements*.txt"
+        - "pyproject.toml"
+        - "setup.cfg"
+
+    # ── CI enforcement ────────────────────────────────────────────────────────
+
+    - name: "pre-commit in CI pipeline"
+      description: >
+        pre-commit run in CI (GitHub Actions, etc.) so hooks are validated on
+        every PR even if a contributor skips local installation.
+      patterns:
+        - 'pre-commit run|pre.commit run'
+        - 'pre-commit.*--all-files'
+        - 'uses.*pre-commit/action'
+      globs:
+        - "*.yml"
+        - "*.yaml"
+        - "Makefile"
+
+    # ── Teaching indicator ────────────────────────────────────────────────────
+
+    - name: "pre-commit documentation"
+      description: >
+        README or instruction file explaining how to install and use pre-commit
+        hooks in the project — including the install command and run order
+        relative to Black, Ruff, and mypy.
+      patterns:
+        - 'pre-commit install|pre.commit install'
+        - 'pre-commit run|pre.commit run'
+        - 'git hook|commit hook|hook.*black|hook.*ruff'
+        - 'pre.commit.*format|format.*pre.commit'
+      globs:
+        - "*.md"
+        - "*.txt"
+        - "*.rst"
+      is_teaching: true
